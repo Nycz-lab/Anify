@@ -3,6 +3,9 @@ import os
 import time
 import json
 
+from PIL import Image
+import tkinter as tk
+
 class wallhavenapi:
 
     wapiJson = {}
@@ -10,7 +13,7 @@ class wallhavenapi:
 
     #search for images based on criteria defined in parameters
     def search(self, sorting="toplist", categories=None, tags=None, purity=None, apikey=None, resolution='1920x1080'):
-        baseUrl = 'https://wallhaven.cc/api/v1/search/?sorting=toplist'
+        baseUrl = 'https://wallhaven.cc/api/v1/search/?ratio=16x9'
 
         if categories:
             baseUrl += f"&categories={categories}"
@@ -55,6 +58,8 @@ class wallhavenapi:
             download = requests.get(wallpaper['path'])
             with open(f"wallpapers/{wallpaper['id']}", "wb") as image:
                 image.write(download.content)
+            
+
 
     #generate category code based on strings
     def setCategories(self, *arg):
@@ -94,8 +99,10 @@ class wallhavenapi:
                 print(f"Now displaying {file}")
 
                 #Gnome
+                #os.system(f"/usr/bin/gsettings set org.gnome.desktop.background picture-options scaled")
                 os.system(f"/usr/bin/gsettings set org.gnome.desktop.background picture-uri {os.path.dirname(os.path.abspath(__file__))}/wallpapers/{file}")
-                time.sleep(10)
+
+                time.sleep(5)
 
 
 
@@ -104,8 +111,10 @@ class wallhavenapi:
 
 if __name__ == '__main__':
     wapi = wallhavenapi()
-    wapi.search()
+    wapi.search(categories=wapi.setCategories("anime", "people"), tags="")
     wapi.downloadWallpapers()
     wapi.setBackgroundCycle()
-
+    
+    #window = tk.Tk()
+    #window.mainloop()
 
